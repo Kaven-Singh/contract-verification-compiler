@@ -1,0 +1,4 @@
+# title: Valid terminating transition
+VAR amount: MONEY;
+STATE ACTIVE INITIAL; STATE CLOSED;
+RULE close FROM ACTIVE: IF amount == 0 THEN TERMINATE() GOTO CLOSED;

@@ -1,0 +1,5 @@
+# title: Potential obligation cycle
+VAR amount: MONEY;
+STATE A INITIAL; STATE B; STATE DONE;
+RULE a_to_b FROM A: IF amount > 0 THEN PENALTY(1) GOTO B;
+RULE b_to_a FROM B: IF amount > 0 THEN PENALTY(1) GOTO A;

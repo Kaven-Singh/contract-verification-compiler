@@ -1,0 +1,4 @@
+# title: Force-majeure exception
+VAR paymentDate: DATE; VAR dueDate: DATE; VAR forceMajeure: BOOL;
+STATE ACTIVE INITIAL; STATE LATE;
+RULE late_fee FROM ACTIVE: IF paymentDate > dueDate + 30 DAYS THEN PENALTY(2) UNLESS forceMajeure GOTO LATE;

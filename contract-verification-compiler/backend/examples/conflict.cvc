@@ -1,0 +1,5 @@
+# title: Conflicting obligations
+VAR amount: MONEY;
+STATE ACTIVE INITIAL;
+RULE fee FROM ACTIVE: IF amount > 100 THEN PENALTY(2);
+RULE waive FROM ACTIVE: IF amount > 500 THEN WAIVE_PENALTY();

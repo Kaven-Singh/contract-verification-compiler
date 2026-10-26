@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Contract Verification Compiler</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/editor.css">
+</head>
+<body>
+<header class="app-header">
+  <h1>Contract Verification Compiler</h1>
+  <!-- Tab buttons are generated from each .tab panel's data-title by app.js -->
+  <nav id="tabs" role="tablist" aria-label="Result panels"></nav>
+</header>
+
+<main class="layout">
+  <!-- Left column: source editor, toolbar, diagnostics -->
+  <section class="panel" aria-labelledby="editor-title">
+    <h2 id="editor-title" class="sr-only">Contract editor</h2>
+    <div class="toolbar" role="toolbar" aria-label="Editor actions">
+      <label class="sr-only" for="examples">Load an example contract</label>
+      <select id="examples"><option value="">Load example…</option></select>
+      <button type="button" id="bCompile" class="primary">Compile &amp; Analyze</button>
+      <button type="button" id="bBytecode">Bytecode</button>
+      <button type="button" id="bExec">Execute</button>
+      <button type="button" id="bClear">Clear</button>
+      <button type="button" id="bReset">Reset</button>
+      <button type="button" id="bUndo" disabled>Undo repair</button>
+      <button type="button" id="bDl">Download</button>
+      <span id="spin" class="spinner" role="status" hidden>working…</span>
+    </div>
+    <!-- #hl is a read-only highlighting layer drawn behind the transparent textarea (see editor.css) -->
+    <div class="editor">
+      <pre id="hl" aria-hidden="true"></pre>
+      <textarea id="src" aria-label="Contract source" spellcheck="false" wrap="off"
+                placeholder="Write or load a contract in the DSL…"></textarea>
+    </div>
+    <h3>Diagnostics</h3>
+    <ul id="diags" class="diagnostics" aria-live="polite"><li>Not compiled yet.</li></ul>
+  </section>
+
+  <!-- Right column: one panel per result view; only the selected panel is visible -->
+  <section class="panel" aria-label="Compiler results">
+    <div class="tab" id="dash" role="tabpanel" data-title="Dashboard">
+      <p>Compiles contract clauses written in a small DSL, verifies logical consistency (not legal validity) and
+         executes them on a VM.</p>
+      <p class="muted">DSL → Lexer → Parser → AST → Semantic → FSM → Static analysis → Bytecode → VM → Trace &amp; repairs</p>
+      <div id="stats" class="cards"></div>
+    </div>
+    <div class="tab" id="pipe" role="tabpanel" data-title="Pipeline"><div id="stages"></div></div>
+    <div class="tab" id="astTab" role="tabpanel" data-title="AST"><pre id="ast">Compile a contract to see its AST.</pre></div>
+    <div class="tab" id="fsmTab" role="tabpanel" data-title="FSM">
+      <div id="fsm">Compile a contract to see its FSM.</div>
+      <pre id="fsmInfo" aria-live="polite"></pre>
+    </div>
+    <div class="tab" id="ana" role="tabpanel" data-title="Analysis"><div id="analysis">Compile a contract to see the analysis.</div></div>
+    <div class="tab" id="rep" role="tabpanel" data-title="Repairs">
+      <p id="repMsg" aria-live="polite"></p>
+      <div id="repairs">No repairs yet.</div>
+    </div>
+    <div class="tab" id="vm" role="tabpanel" data-title="Bytecode &amp; VM">
+      <pre id="bc">Compile a valid contract to see bytecode.</pre>
+      <label for="inputs">Runtime inputs (JSON; dates as YYYY-MM-DD)</label>
+      <textarea id="inputs" class="plain" spellcheck="false" rows="6">{}</textarea>
+      <label for="steps">Max steps</label>
+      <input id="steps" type="number" value="10000" min="1" max="100000">
+      <div id="vmOut" aria-live="polite"></div>
+    </div>
+    <div class="tab" id="docs" role="tabpanel" data-title="Docs">
+      <h3>DSL syntax</h3>
+<pre>VAR name: DATE | NUMBER | MONEY | BOOL | ENUM(A, B, C);
+STATE NAME [INITIAL];
+RULE id FROM STATE: IF cond THEN ACTION(args) [UNLESS cond] [GOTO STATE];
+# comment</pre>
+      <p><b>Expressions:</b> OR &lt; AND &lt; NOT &lt; comparison (&gt; &lt; &gt;= &lt;= == !=) &lt; + -. Durations: <code>30 DAYS</code>;
+         <code>date + n MONTHS</code> uses calendar months (month-end clamps).</p>
+      <p><b>Actions:</b> PENALTY(n), WAIVE_PENALTY(), TERMINATE(). <b>Types:</b> MONEY and NUMBER compare; DATE ± DURATION → DATE;
+         DATE − DATE → NUMBER (days). ENUM supports == and != against its own literals.</p>
+      <p><b>Stages:</b> lexer, recursive-descent parser, semantic analysis (E2xx), FSM, static analysis (reachability BFS, conflict
+         detection on effective conditions, Tarjan SCC cycles), bytecode, stack VM.</p>
+      <p><b>Bytecode:</b> PUSH LOAD STORE ADD SUB ADD_MONTHS SUB_MONTHS CMP_EQ/NE/LT/GT/LE/GE AND OR NOT JUMP JUMP_IF_FALSE CHECK_STATE
+         TRANSITION TRIGGER_OBLIGATION RULE HALT. Validated (operands, jump targets, stack depth and types) before execution.</p>
+      <p><b>Limitations:</b> conflict analysis is exact only for conjunctions of <code>var OP number</code> / BOOL guards (others give
+         warnings); the VM evaluates rules in one pass in source order; cycles are structural and never proven infinite; no legal
+         validity checking. See docs/LIMITATIONS.md.</p>
+    </div>
+  </section>
+</main>
+
+<!-- Plain scripts sharing one namespace (window.CVC); order matters: util → api → views → app -->
+<script src="js/util.js"></script>
+<script src="js/api.js"></script>
+<script src="js/editor.js"></script>
+<script src="js/pipeline.js"></script>
+<script src="js/ast.js"></script>
+<script src="js/fsm.js"></script>
+<script src="js/analysis.js"></script>
+<script src="js/repairs.js"></script>
+<script src="js/execution.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+# title: Repaired version of the conflicting contract
+VAR amount: MONEY;
+STATE ACTIVE INITIAL;
+RULE fee FROM ACTIVE: IF amount > 100 THEN PENALTY(2) UNLESS (amount > 500);
+RULE waive FROM ACTIVE: IF amount > 500 THEN WAIVE_PENALTY();

@@ -1,0 +1,6 @@
+{
+  "name": "contract-verification-compiler",
+  "private": true,
+  "scripts": {"e2e": "node tests/e2e_browser.js"},
+  "devDependencies": {"jsdom": "^24.0.0"}
+}

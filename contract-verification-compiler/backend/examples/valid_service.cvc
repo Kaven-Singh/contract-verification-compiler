@@ -1,0 +1,5 @@
+# title: Valid service agreement
+VAR paymentDate: DATE; VAR dueDate: DATE; VAR forceMajeure: BOOL; VAR amount: MONEY;
+STATE ACTIVE INITIAL; STATE LATE; STATE TERMINATED;
+RULE late_fee FROM ACTIVE: IF paymentDate > dueDate + 30 DAYS THEN PENALTY(2) UNLESS forceMajeure GOTO LATE;
+RULE give_up FROM LATE: IF paymentDate > dueDate + 90 DAYS THEN TERMINATE() GOTO TERMINATED;

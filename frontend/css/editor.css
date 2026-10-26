@@ -1,0 +1,32 @@
+/* Source editor: a transparent <textarea> on top of a highlighted <pre> that mirrors its text.
+   Both layers MUST share identical font, padding, wrapping and scroll position or the colours drift off the text. */
+.editor { position: relative; }
+.editor pre,
+.editor textarea {
+  margin: 0;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font: 13px/1.5 var(--font-code);
+  letter-spacing: 0;
+  tab-size: 2;
+  white-space: pre; /* no wrapping, so line N in both layers is the same row */
+  overflow: auto;
+}
+.editor pre { position: absolute; inset: 0; max-height: none; overflow: hidden; background: var(--code-bg); color: var(--text); pointer-events: none; }
+.editor textarea { position: relative; z-index: 1; width: 100%; min-height: 280px; resize: vertical; background: transparent; color: transparent; caret-color: var(--text); }
+.editor i { font-style: normal; }
+.k { color: #c792ea; } /* keywords */
+.t { color: #4fc1ff; } /* types */
+.a { color: #ffcb6b; } /* actions */
+.n { color: #f78c6c; } /* numbers */
+.c { color: #6b7a99; } /* comments */
+.ln.err { text-decoration: underline wavy var(--danger); }
+.ln.warn { text-decoration: underline wavy var(--warn); }
+
+/* Diagnostics list under the editor */
+.diagnostics { max-height: 230px; margin: 0; padding: 0; overflow: auto; list-style: none; }
+.diagnostics li { margin-bottom: var(--space-1); padding: 6px var(--space-2); background: var(--surface-2); border-left: 3px solid var(--border); cursor: pointer; }
+.diagnostics li.error { border-color: var(--danger); }
+.diagnostics li.warning { border-color: var(--warn); }
+.diagnostics li.ok { border-color: var(--ok); cursor: default; }

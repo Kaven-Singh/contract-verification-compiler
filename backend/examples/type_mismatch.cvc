@@ -1,0 +1,4 @@
+# title: DATE-versus-MONEY type mismatch
+VAR paymentDate: DATE; VAR dueDate: DATE; VAR amount: MONEY;
+STATE ACTIVE INITIAL; STATE LATE;
+RULE bad_check FROM ACTIVE: IF paymentDate > amount THEN PENALTY(2) GOTO LATE;
